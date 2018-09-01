@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Base Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% include "base/css.html" %}
+    {% block base_head %} {% endblock %}
+</head>
+
+<body>
+    {% include "base/navbar.html" with brand_name="eCommerce" %}
+    <div class="container">
+    {% block content %} {% endblock %}
+    {% include "base/js.html" %}
+    </div>
+</body>
+
+</html>

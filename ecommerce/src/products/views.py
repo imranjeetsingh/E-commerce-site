@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, Http404
 from django.views.generic import ListView, DetailView
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 
 from .models import Product
@@ -47,3 +48,21 @@ class ProductDeatailView(DetailView):
     #     request = self.request
     #     pk      = self.kwargs.get('pk')
     #     return Product.objects.filter(pk=pk)
+
+class ProductDeatailSlugView(DetailView):
+    queryset = Product.objects.all()
+    template_name = "products/detail.html"
+
+    def get_object(self, *args, **kwargs):
+        request = self.request
+        slug    = self.kwargs.get("slug")
+        try:
+            instance = Product.objects.get(slug = slug , active = True)
+        except Product.DoesNotExist:
+            raise Http404("Not hii Found")
+        except Product.MultipleObjectsReturned:
+            qs = Product.objects.filter(slug =slug, active = True)
+            instance = qs.first()
+        except:
+            raise Http404("Uhoohohoohohoho")
+        return instance

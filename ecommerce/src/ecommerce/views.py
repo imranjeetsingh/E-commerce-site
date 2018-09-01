@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login,get_user_model, logout
 from django.shortcuts import render, redirect
 from .forms import ContactForm, LoginForm, RegisterForm
 
+User = get_user_model()
+
 def home_page(request):
     context = {
         "title" : 'Home Page',
@@ -24,7 +26,8 @@ def contact_page(request):
     context = {
         "title" : 'Contact Page',
         "content" : "Welcome to Contact page",
-        "form"     : form
+        "form"     : form,
+        "brand"     :"New Brand Name"
     }
     if form.is_valid():
         print(form.cleaned_data)
@@ -32,7 +35,7 @@ def contact_page(request):
     #     print(request.POST.get('fullname'))
     #     print(request.POST.get('email'))
     #     print(request.POST.get('content'))
-    return render(request,"contact.html",context)
+    return render(request,"contact/contact.html",context)
 
 def login_page(request):
     form = LoginForm(request.POST or None)
@@ -45,7 +48,7 @@ def login_page(request):
         # context['form'] = LoginForm()
         username = form.cleaned_data.get('username')
         password  = form.cleaned_data.get('password')
-        user     = authenticate(request, username=username, password=password)
+        user     = authenticate(username=username, password=password)
         print(request.user.is_authenticated())
         if user is not None:
             print(request.user.is_authenticated())
@@ -55,7 +58,6 @@ def login_page(request):
             print("Error")
     return render(request,"auth/login.html",context)
 
-User = get_user_model()
 def register_page(request):
     form = RegisterForm(request.POST or None)
     context = {
