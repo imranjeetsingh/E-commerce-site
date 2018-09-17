@@ -1,13 +1,14 @@
-{% extends "base.html" %} 
-{% block content %} 
-<div class="container">
+{% extends "base.html" %} {% block content %}
 <div class="row">
-    <div class="col">
-   <h1>{{object.title}}</h1></br>
-   {{ object.timestamp }}
-    {{object.description}}</br>
-    {% if object.image %}
-        <img src="{{ object.image.url }}" class="img-fluid"> 
-    {% endif %}
-<div></div></div>
+    <div class="col-12 col-md-6">
+        <h1>{{object.title}}</h1></br>
+        {{ object.timestamp }} {{object.description}}
+        </br>
+        {% if object.image %}
+    </div>
+    <img src="{{ object.image.url }}" class="img-fluid"> {% endif %}
+    <div class="col-12 col-md-6">
+        {% include 'products/snippets/update-cart.html' with product=object cart=cart %}
+    </div>
+</div>
 {% endblock %}

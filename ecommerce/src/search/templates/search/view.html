@@ -5,7 +5,9 @@
             {% if query %}
             <div class="col-12">
                
-                <h4>Searched for <b>{{ query }}</b></h4>
+                <h3>Searched for <b>{{ query }}</b></h4><hr/>
+                <!-- <h4>Oops no result found!!!</h3><hr/> -->
+                <!-- <h5>Try different keyword!!!! or <hr/> Go to Product page <a href="{% url 'products:list' %}">Product</a></h5> -->
             <hr/>
             </div>
             {% else %}
