@@ -8,6 +8,7 @@ from django.utils.http import is_safe_url
 from .forms import ContactForm, LoginForm, RegisterForm, GuestForm
 from .models import GuestEmail
 from django.views.generic import CreateView, FormView
+from .signals import user_logged_in
 # Create your views here.
 
 
@@ -46,6 +47,7 @@ class LoginView(FormView):
         user     = authenticate(username=email, password=password)
         if user is not None:
             login(request, user)
+            user_logged_in.send(user.__class__,instance=user, request=request)
             print("heloo")
             try:
                 del request.session['guest_email_id']

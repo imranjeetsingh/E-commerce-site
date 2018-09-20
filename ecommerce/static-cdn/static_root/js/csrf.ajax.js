@@ -14,6 +14,7 @@ $(document).ready(function () {
         }
         return cookieValue;
     }
+    
     var csrftoken = getCookie('csrftoken');
 
     function csrfSafeMethod(method) {

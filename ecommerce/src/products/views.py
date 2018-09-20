@@ -4,6 +4,7 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 from carts.models import Cart
 from .models import Product
+from analytics.mixins import ObjectViewedMixin
 # Create your views here.
 
 class ProductFeaturedListView(ListView):
@@ -13,7 +14,7 @@ class ProductFeaturedListView(ListView):
     #     request = self.request
     #     return Product.objects.featured()
 
-class ProductFeaturedDeatailView(DetailView):
+class ProductFeaturedDeatailView(ObjectViewedMixin,DetailView):
     queryset        = Product.objects.all().featured()
     template_name   = "products/featured-detail.html"
     # def get_queryset(self, *args, **kwargs):
@@ -31,7 +32,7 @@ class ProductListView(ListView):
         return context
     
 
-class ProductDeatailView(DetailView):
+class ProductDeatailView(ObjectViewedMixin,DetailView):
     # queryset        = Product.objects.all()
     template_name   = "products/detail.html"
     # print(queryset)
@@ -56,7 +57,7 @@ class ProductDeatailView(DetailView):
     #     pk      = self.kwargs.get('pk')
     #     return Product.objects.filter(pk=pk)
 
-class ProductDeatailSlugView(DetailView):
+class ProductDeatailSlugView(ObjectViewedMixin, DetailView):
     queryset = Product.objects.all()
     template_name = "products/detail.html"
 
@@ -78,4 +79,5 @@ class ProductDeatailSlugView(DetailView):
             instance = qs.first()
         except:
             raise Http404("Uhoohohoohohoho")
+        # object_viewed_signal.send(instance.__class__, instance=instance, request=request)
         return instance
