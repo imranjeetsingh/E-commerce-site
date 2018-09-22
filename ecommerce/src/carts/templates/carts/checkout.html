@@ -42,10 +42,21 @@
         </div>
     </div>
     {% else %}
+        {% if not has_card %}
+        <div class="col-10 col-md-6 mx-auto">
+            <h2>Add Payment Method</h2>
+        <div class="stripe-payment-form" 
+        data-next-url='{{ request.build_absolute_uri }}'
+        id="payment-form" 
+        data-token='{{publish_key}}'></div>
+        </div>
+        {% else %}
+
         <h1>Checkout</h1>
         <p>Cart Items:{% for product in object.cart.products.all %}{{product}}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
         <p>shipping Address:{{object.shipping_address.get_address}}</p>
         <p>billing Address:{{object.billing_address.get_address}}</p>
+        <p>Payment Method: {{billing_profile.default_card }}  <a href="{{billing_profile.get_payment_method_url}}?next={{request.build_absolute_uri}}">Change Payment Method</a></p>
         <p>Cart Total: {{object.cart.total}}</p>
         <p>Shipping Total:{{object.shipping_total}}</p>
         <p>Order Total: {{object.total}}</p>
@@ -53,6 +64,7 @@
             {% csrf_token %}
             <button class="btn btn-success" type="submit">Checkout</button>
         </form>
+    {% endif %}
     {% endif %}
 {% endif %}
 

@@ -10,7 +10,16 @@ from products.models import Product
 from billing.models import BillingProfile
 from addresses.forms import AddressForm
 from addresses.models import Address
+from django.conf import settings
 
+import stripe
+
+STRIPE_SECRET_KEY = getattr(settings, "STRIPE_SECRET_KEY", "sk_test_G1XNXJeqKpZxor4XQDr0HwHI")
+
+stripe.api_key = STRIPE_SECRET_KEY
+
+STRIPE_PUB_KEY = getattr(settings,"STRIPE_PUB_KEY","pk_test_kS2vnlijzSUlFP7S86PsmzXf")
+# Create your views here.
 
 def cart_detail_api_view(request):
     cart_obj, new_obj =Cart.objects.new_or_get(request)
@@ -74,6 +83,7 @@ def checkout(request):
     billing_profile, created = BillingProfile.objects.new_or_get(request)
 
     address_qs = None
+    has_card = None
 
     if billing_profile is not None:
         if request.user.is_authenticated():
@@ -88,15 +98,23 @@ def checkout(request):
             del request.session["billing_address_id"]
         if billing_address_id or shipping_address_id:
             order_obj.save()
+        
+        has_card = billing_profile.has_card
 
         if request.method == "POST":
-            is_done = order_obj.check_done()
-            if is_done:
-                order_obj.mark_paid()
-                del request.session['cart_id']
-                request.session["cart_item"] = ""
-            return redirect("cart:success")
-
+            is_prepared = order_obj.check_done()
+            if is_prepared:
+                did_charge, crg_msg = billing_profile.charge(order_obj)
+                if did_charge:
+                    order_obj.mark_paid()
+                    del request.session['cart_id']
+                    request.session["cart_item"] = ""
+                    if not billing_profile.user:
+                        billing_profile.set_cards_inactive()
+                return redirect("cart:success")
+            else:
+                print(crg_msg)
+                return redirect("cart:checkout")
     context = {
         "object": order_obj,
         "billing_profile": billing_profile,
@@ -104,7 +122,9 @@ def checkout(request):
         "guest_form": guest_form,
         "address_form":address_form,
         "billing_address_form":billing_address_form,
-        "address_qs":address_qs
+        "address_qs":address_qs,
+        "has_card" :has_card,
+        "publish_key":STRIPE_PUB_KEY,
     }
     return render(request, "carts/checkout.html", context)
 
