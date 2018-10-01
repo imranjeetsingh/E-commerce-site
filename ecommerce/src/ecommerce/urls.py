@@ -29,6 +29,7 @@ from .views import home_page, contact_page, about_page
 from addresses.views import checkout_address_create_view,checkout_address_reuse_view
 from billing.views import payment_method_view, payment_method_createview
 from carts.views import cart_home,cart_detail_api_view
+from marketing.views import MarketingPreferenceUpdateView, MailchimpWebhookView
 
 from products.views import ProductDeatailSlugView, ProductFeaturedListView, ProductFeaturedDeatailView
 
@@ -49,6 +50,8 @@ urlpatterns = [
     url(r'^billing/payment-method/create/$',payment_method_createview, name="billing-payment-method-endpoint"),
     url(r'^products/', include("products.urls",namespace="products")),
     url(r'^search/', include("search.urls",namespace="search")),
+    url(r'^settings/email/$',MarketingPreferenceUpdateView.as_view(), name='marketing-pref'), 
+    url(r'^webhook/mailchimp/$',MailchimpWebhookView.as_view(), name='webhook-mailchimp'),   
     url(r'^admin/', admin.site.urls),
 ]
 

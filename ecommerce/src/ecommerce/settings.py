@@ -46,9 +46,14 @@ INSTALLED_APPS = [
     'billing',
     'addresses',
     'analytics',
+    'marketing',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
+
+MAILCHIMP_API_KEY = "d274b899627405bf0074179468b7794c-us19"
+MAILCHIMP_DATA_CENTER = "us19"
+MAILCHIMP_EMAIL_LIST_ID = "a847e52914"
 
 STRIPE_SECRET_KEY = "sk_test_G1XNXJeqKpZxor4XQDr0HwHI"
 
